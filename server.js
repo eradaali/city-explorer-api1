@@ -11,26 +11,34 @@ const PORT =process.env.PORT;
 app.use(cors());
 app.get('/',(req,res) =>{res.send('hello world')});
 
-app.get('/weather', (req, res) => { 
-    res.json({message :'weather api'});
+app.get('/weather', (req, res) => {
+
+ 
+    // res.json({message :'weather api'}
+    // );
 //  let lat=req.query.lat;
 //  let lon=req.query.lon;
-//  let searchQuery=req.query.searchQuery;
+ let searchQuery=req.query.searchQuery;
 //  console.log(lat);
 //  console.log(lon);
-//  console.log(searchQuery);
-
-let findData =()=>{
+ console.log(searchQuery);
+ let findData =()=>{
     let city=weather.find((city,indx)=>{
         return city.city_name.toLowerCase() === searchQuery.toLowerCase()
     })
-    console.log(city.data)
+
+    console.log(city)
     return city.data.map(item =>{
      return new ForeCast(item)
         
     })
 }
 res.json(findData());
+
+} 
+ );
+
+
 
     // res.json(
     //     weather.map((item,idx) =>{
@@ -41,7 +49,7 @@ res.json(findData());
     // );
     // throw new Error('BROKEN');
 
-});
+// });
 class ForeCast {
     constructor(weatherData){
         this.date=weatherData.valid_date,
