@@ -1,63 +1,54 @@
-// const { request, response } = require('express');
 const express = require('express');
 const weather = require('./data/weather.json');
-const app = express() ;
-const cors=require('cors');
+const app = express();
+const cors = require('cors');
 require('dotenv').config();
-const PORT =process.env.PORT;
-
-
-
+const PORT = process.env.PORT;
 app.use(cors());
-app.get('/',(req,res) =>{res.send('hello world')});
+
+
+app.get('/', (req, res) => { res.send('hello world') });
 
 app.get('/weather', (req, res) => {
+    let lat = req.query.lat;
+    let lon = req.query.lon;
+    let searchQuery = req.query.searchQuery;
+    console.log(lat);
+    console.log(lon);
+    console.log(searchQuery);
 
- 
-    // res.json({message :'weather api'}
-    // );
-//  let lat=req.query.lat;
-//  let lon=req.query.lon;
- let searchQuery=req.query.searchQuery;
-//  console.log(lat);
-//  console.log(lon);
- console.log(searchQuery);
- let findData =()=>{
-    let city=weather.find((city,indx)=>{
-        return city.city_name.toLowerCase() === searchQuery.toLowerCase()
-    })
-
-    console.log(city)
-    return city.data.map(item =>{
-     return new ForeCast(item)
-        
-    })
-}
-res.json(findData());
-
-} 
- );
+    try {
+        let findData = () => {
+            let city = weather.find((city, indx) => {
+                return city.city_name.toLowerCase() === searchQuery.toLowerCase() && city.lat === Number(lat) && city.lon == Number(lon)
+            })
 
 
+            console.log(city)
+            return city.data.map(item => {
+                return new ForeCast(item)
 
-    // res.json(
-    //     weather.map((item,idx) =>{
-    //         console.log(item.data[idx].valid_date)
-    //         return new ForeCast(item.data[idx]);
-    //         console.log(data);
-    //     })
-    // );
-    // throw new Error('BROKEN');
+            })
+        }
+        res.json(findData());
+    }
+    catch (err) {
 
-// });
-class ForeCast {
-    constructor(weatherData){
-        this.date=weatherData.valid_date,
-        this.description=weatherData.weather.description
+        res.status(500)
+        res.send('Error :something went wrong !!')
+
     }
 }
- 
-app.listen(PORT ,()=>{
+);
+
+class ForeCast {
+    constructor(weatherData) {
+        this.date = weatherData.valid_date,
+            this.description = weatherData.weather.description
+    }
+}
+
+app.listen(PORT, () => {
     console.log(`started at ${PORT}`);
     console.log(PORT);
 });
